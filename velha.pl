@@ -21,24 +21,25 @@ moverIA([A,B,C,a,E,F,G,H,I], 4).
 moverIA([A,B,C,D,E,a,G,H,I], 6).
 moverIA([A,B,C,D,E,F,G,a,I], 8).
 
-moverJ([a,B,C,D,E,F,G,H,I], 1, [x,B,C,D,E,F,G,H,I]).
-moverJ([A,a,C,D,E,F,G,H,I], 2, [A,x,C,D,E,F,G,H,I]).
-moverJ([A,B,a,D,E,F,G,H,I], 3, [A,B,x,D,E,F,G,H,I]).
-moverJ([A,B,C,a,E,F,G,H,I], 4, [A,B,C,x,E,F,G,H,I]).
-moverJ([A,B,C,D,a,F,G,H,I], 5, [A,B,C,D,x,F,G,H,I]).
-moverJ([A,B,C,D,E,a,G,H,I], 6, [A,B,C,D,E,x,G,H,I]).
-moverJ([A,B,C,D,E,F,a,H,I], 7, [A,B,C,D,E,F,x,H,I]).
-moverJ([A,B,C,D,E,F,G,a,I], 8, [A,B,C,D,E,F,G,x,I]).
-moverJ([A,B,C,D,E,F,G,H,a], 9, [A,B,C,D,E,F,G,H,x]).
+moverJ([a,B,C,D,E,F,G,H,I], 1, XY, [XY,B,C,D,E,F,G,H,I]).
+moverJ([A,a,C,D,E,F,G,H,I], 2, XY, [A,XY,C,D,E,F,G,H,I]).
+moverJ([A,B,a,D,E,F,G,H,I], 3, XY, [A,B,XY,D,E,F,G,H,I]).
+moverJ([A,B,C,a,E,F,G,H,I], 4, XY, [A,B,C,XY,E,F,G,H,I]).
+moverJ([A,B,C,D,a,F,G,H,I], 5, XY, [A,B,C,D,XY,F,G,H,I]).
+moverJ([A,B,C,D,E,a,G,H,I], 6, XY, [A,B,C,D,E,XY,G,H,I]).
+moverJ([A,B,C,D,E,F,a,H,I], 7, XY, [A,B,C,D,E,F,XY,H,I]).
+moverJ([A,B,C,D,E,F,G,a,I], 8, XY, [A,B,C,D,E,F,G,XY,I]).
+moverJ([A,B,C,D,E,F,G,H,a], 9, XY, [A,B,C,D,E,F,G,H,XY]).
 
-venceJ(L) :- moverIA(L, X), moverJ(L, X, NL), vitoria(NL, x).
+venceJ(L) :- moverIA(L, X), moverJ(L, X, x, NL), vitoria(NL, x).
 
 oplay(L,X) :-
   moverIA(L, X),
-  moverJ(L, X, NL),
+  moverJ(L, X, o, NL),
   vitoria(NL, o),!.
 oplay(L,X) :-
   moverIA(L, X),
+  moverJ(L, X, o, NL),
   not(venceJ(NL)).
 oplay(L,X) :-
   moverIA(L, X).
