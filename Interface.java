@@ -20,8 +20,8 @@ public class Interface implements ActionListener {
     private boolean player2 = false;
     private Prolog engine = new Prolog();
     private List<String> lista = new ArrayList();
-    protected JPanel panel;
-    //lista = {"a","a","a","a","a","a","a","a","a"};
+    private JPanel panel;
+
     public Interface() {
         criarTela();
     }
@@ -56,21 +56,35 @@ public class Interface implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        Object o = event.getSource();
-        JButton b = (JButton) o;
-        desenhar(b);
-        int p = Integer.parseInt(b.getName());
-        lista.set(p-1, "x");
-        try {
-            Theory theory = new Theory(new FileInputStream("velha.pl"));
-            engine.setTheory(theory);
-            SolveInfo info = engine.solve("oplay("+lista+",X).");
-            p = Integer.parseInt(info.getTerm("X").toString());
-            System.out.println(lista);
-            lista.set(p-1, "o");
-            desenhar((JButton)panel.getComponent(p-1));
-        } catch (Exception e) {
-        }
+        if (lista.contains("a")) {
+            Object o = event.getSource();
+            JButton b = (JButton) o;
+            desenhar(b);
+            int p = Integer.parseInt(b.getName());
+            lista.set(p - 1, "x");
+            try {
+                Theory theory = new Theory(new FileInputStream("velha.pl"));
+                engine.setTheory(theory);
+                SolveInfo info = engine.solve("oplay(" + lista + ",X).");
+                p = Integer.parseInt(info.getTerm("X").toString());
+                lista.set(p - 1, "o");
+                desenhar((JButton) panel.getComponent(p - 1));
+                System.out.println(lista);
+                info = engine.solve("vitoria(" + lista + ",o).");
+                if (info.isSuccess()) {
+                    lista.clear();
+                    JButton btn;
+                    for (int i = 0; i < 9; i++) {
+                        btn = (JButton) panel.getComponent(i);
+                        if(btn.getText()=="O"){
+                            btn.setBackground(Color.red);
+                            panel.add(btn, i);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+        } else;
     }
 
     public void setX(JButton b, int x) {
