@@ -20,10 +20,13 @@ public class Interface implements ActionListener {
     private boolean player2 = false;
     private Prolog engine = new Prolog();
     private List<String> lista = new ArrayList();
+    private List<String> a = new ArrayList();
     private JPanel panel;
 
     public Interface() {
         criarTela();
+        a.add("x");
+        a.add("o");
     }
 
     private void criarTela() {
@@ -69,14 +72,30 @@ public class Interface implements ActionListener {
                 p = Integer.parseInt(info.getTerm("X").toString());
                 lista.set(p - 1, "o");
                 desenhar((JButton) panel.getComponent(p - 1));
-                System.out.println(lista);
                 info = engine.solve("vitoria(" + lista + ",o).");
                 if (info.isSuccess()) {
                     lista.clear();
                     JButton btn;
                     for (int i = 0; i < 9; i++) {
                         btn = (JButton) panel.getComponent(i);
-                        if(btn.getText()=="O"){
+                        if (btn.getText() == "O") {
+                            btn.setBackground(Color.red);
+                            panel.add(btn, i);
+                        }
+                    }
+                }
+                info = engine.solve("vitoriaA(" + lista + ").");
+                int x = contA();
+                if (x < 2 || (!info.isSuccess() && x < 3)) {
+                    lista.clear();
+                }
+                String s = engine.solveNext().toString();
+                if (s.contains("yes.")) {
+                    lista.clear();
+                    JButton btn;
+                    for (int i = 0; i < 9; i++) {
+                        btn = (JButton) panel.getComponent(i);
+                        if (btn.getText() == "O") {
                             btn.setBackground(Color.red);
                             panel.add(btn, i);
                         }
@@ -89,6 +108,16 @@ public class Interface implements ActionListener {
 
     public void setX(JButton b, int x) {
         b.setName(x + "");
+    }
+
+    public int contA() {
+        int x = 0;
+        for (String string : lista) {
+            if (string == "a") {
+                x += 1;
+            }
+        }
+        return x;
     }
 
     public int getX(JButton b) {
