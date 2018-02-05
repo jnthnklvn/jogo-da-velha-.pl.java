@@ -12,25 +12,25 @@ import javax.swing.JPanel;
 
 import alice.tuprolog.*;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Interface implements ActionListener {
 
     private boolean player2 = false;
-    private Prolog engine = new Prolog();
-    private List<String> lista = new ArrayList();
-    private List<String> a = new ArrayList();
+    private final Prolog engine = new Prolog();
+    private final List<String> lista = new ArrayList();
     private JPanel panel;
+    private int contA = 9;
 
     public Interface() {
         criarTela();
-        a.add("x");
-        a.add("o");
     }
 
     private void criarTela() {
-        JFrame janela = new JFrame("Primeiro o jogo da velha, depois o mundo");
+        JFrame janela = new JFrame("JOGO DA VELHA");
         panel = new JPanel(new GridLayout(3, 3));
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         janela.add(panel);
@@ -48,10 +48,10 @@ public class Interface implements ActionListener {
     }
 
     private void desenhar(JButton b) {
-        if (player2 && b.getText() == "") {
+        if (player2 && "".equals(b.getText())) {
             b.setText("O");
             player2 = !player2;
-        } else if (b.getText() == "") {
+        } else if ("".equals(b.getText())) {
             b.setText("X");
             player2 = !player2;
         }
@@ -63,6 +63,7 @@ public class Interface implements ActionListener {
             Object o = event.getSource();
             JButton b = (JButton) o;
             desenhar(b);
+            contA-=1;
             int p = Integer.parseInt(b.getName());
             lista.set(p - 1, "x");
             try {
@@ -72,55 +73,50 @@ public class Interface implements ActionListener {
                 p = Integer.parseInt(info.getTerm("X").toString());
                 lista.set(p - 1, "o");
                 desenhar((JButton) panel.getComponent(p - 1));
+                contA-=1;
                 info = engine.solve("vitoria(" + lista + ",o).");
                 if (info.isSuccess()) {
                     lista.clear();
                     JButton btn;
                     for (int i = 0; i < 9; i++) {
                         btn = (JButton) panel.getComponent(i);
-                        if (btn.getText() == "O") {
+                        if ("O".equals(btn.getText())) {
                             btn.setBackground(Color.red);
                             panel.add(btn, i);
                         }
                     }
-                }
-                info = engine.solve("vitoriaA(" + lista + ").");
-                int x = contA();
-                if (x < 2 || (!info.isSuccess() && x < 3)) {
-                    lista.clear();
-                }
-                String s = engine.solveNext().toString();
-                if (s.contains("yes.")) {
-                    lista.clear();
-                    JButton btn;
-                    for (int i = 0; i < 9; i++) {
-                        btn = (JButton) panel.getComponent(i);
-                        if (btn.getText() == "O") {
-                            btn.setBackground(Color.red);
-                            panel.add(btn, i);
+                } else {
+                    info = engine.solve("vitoriaA(" + lista + ").");
+                    String s = "";
+                    if (info.isSuccess()) {
+                        s = engine.solveNext().toString();
+                    }
+                    if (s.contains("yes.")) {
+                        lista.clear();
+                        JButton btn;
+                        for (int i = 0; i < 9; i++) {
+                            btn = (JButton) panel.getComponent(i);
+                            if ("O".equals(btn.getText())) {
+                                btn.setBackground(Color.red);
+                                panel.add(btn, i);
+                            }
                         }
                     }
+                    info = engine.solve("empate(" + lista + ").");
+                    if ((!(info.isSuccess())) && contA < 4) {
+                        lista.clear();
+                    }
                 }
-            } catch (Exception e) {
-            }
-        } else;
-    }
-
-    public void setX(JButton b, int x) {
-        b.setName(x + "");
-    }
-
-    public int contA() {
-        int x = 0;
-        for (String string : lista) {
-            if (string == "a") {
-                x += 1;
+            } catch (InvalidTheoryException | MalformedGoalException
+                    | NoMoreSolutionException | NoSolutionException
+                    | UnknownVarException | IOException
+                    | NumberFormatException e) {
+                System.err.println(Arrays.toString(e.getStackTrace()));
             }
         }
-        return x;
     }
-
-    public int getX(JButton b) {
-        return Integer.parseInt(b.getName());
+    
+    public static void main(String[] args) {
+        Interface aInterface = new Interface();
     }
 }
