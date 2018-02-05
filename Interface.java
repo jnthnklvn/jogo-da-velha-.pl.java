@@ -63,7 +63,7 @@ public class Interface implements ActionListener {
             Object o = event.getSource();
             JButton b = (JButton) o;
             desenhar(b);
-            contA-=1;
+            contA -= 1;
             int p = Integer.parseInt(b.getName());
             lista.set(p - 1, "x");
             try {
@@ -73,7 +73,7 @@ public class Interface implements ActionListener {
                 p = Integer.parseInt(info.getTerm("X").toString());
                 lista.set(p - 1, "o");
                 desenhar((JButton) panel.getComponent(p - 1));
-                contA-=1;
+                contA -= 1;
                 info = engine.solve("vitoria(" + lista + ",o).");
                 if (info.isSuccess()) {
                     lista.clear();
@@ -90,21 +90,22 @@ public class Interface implements ActionListener {
                     String s = "";
                     if (info.isSuccess()) {
                         s = engine.solveNext().toString();
-                    }
-                    if (s.contains("yes.")) {
-                        lista.clear();
-                        JButton btn;
-                        for (int i = 0; i < 9; i++) {
-                            btn = (JButton) panel.getComponent(i);
-                            if ("O".equals(btn.getText())) {
-                                btn.setBackground(Color.red);
-                                panel.add(btn, i);
+                    } else {
+                        if (s.contains("yes.")) {
+                            lista.clear();
+                            JButton btn;
+                            for (int i = 0; i < 9; i++) {
+                                btn = (JButton) panel.getComponent(i);
+                                if ("O".equals(btn.getText())) {
+                                    btn.setBackground(Color.red);
+                                    panel.add(btn, i);
+                                }
                             }
                         }
-                    }
-                    info = engine.solve("empate(" + lista + ").");
-                    if ((!(info.isSuccess())) && contA < 4) {
-                        lista.clear();
+                        info = engine.solve("empate(" + lista + ").");
+                        if ((!(info.isSuccess())) && contA < 4) {
+                            lista.clear();
+                        }
                     }
                 }
             } catch (InvalidTheoryException | MalformedGoalException
@@ -115,7 +116,7 @@ public class Interface implements ActionListener {
             }
         }
     }
-    
+
     public static void main(String[] args) {
         Interface aInterface = new Interface();
     }
