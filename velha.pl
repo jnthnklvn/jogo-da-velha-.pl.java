@@ -12,7 +12,7 @@ vitoriaA(L) :-
   moverIA(L, X),
   moverJ(L, X, o, NL),
   vitoria(NL, o).
-%% Procura possivel jogada e retorna a posição dela
+%% Procura possivel jogada e retorna a posicao dela
 moverIA([_,_,_,_,a,_,_,_,_], 5).
 moverIA([x,a,a,_,_,_,a,_,x], 2).
 moverIA([a,a,x,_,_,_,x,_,a], 2).
@@ -47,3 +47,8 @@ oplay(L,X) :-
   moverIA(L, X),
   moverJ(L, X, o, NL),
   not(venceJ(NL)).
+%% Retorna falso se naoh eh possivel vitoria da IA
+empate(L) :- moverIA(L, X), moverJ(L, X, x, NL),
+             moverIA(NL, NX), moverJ(NL, NX, o, NNL), not(venceJ(NNL)),
+             (not(member(a,NNL));(moverIA(NNL, NNX), moverJ(NNL, NNX, x, NNNL))),
+             (vitoria(NNNL,o);vitoria(NNL,o)),!.
