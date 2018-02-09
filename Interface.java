@@ -90,7 +90,6 @@ public class Interface implements ActionListener {
                     String s = "";
                     if (info.isSuccess()) {
                         s = engine.solveNext().toString();
-                    } else {
                         if (s.contains("yes.")) {
                             lista.clear();
                             JButton btn;
@@ -102,6 +101,7 @@ public class Interface implements ActionListener {
                                 }
                             }
                         }
+                    }else{
                         info = engine.solve("empate(" + lista + ").");
                         if ((!(info.isSuccess())) && contA < 4) {
                             lista.clear();
