@@ -85,27 +85,10 @@ public class Interface implements ActionListener {
                             panel.add(btn, i);
                         }
                     }
-                } else {
-                    info = engine.solve("vitoriaA(" + lista + ").");
-                    String s = "";
+                } else if (contA < 4) {
+                    info = engine.solve("empate(" + lista + ").");
                     if (info.isSuccess()) {
-                        s = engine.solveNext().toString();
-                        if (s.contains("yes.")) {
-                            lista.clear();
-                            JButton btn;
-                            for (int i = 0; i < 9; i++) {
-                                btn = (JButton) panel.getComponent(i);
-                                if ("O".equals(btn.getText())) {
-                                    btn.setBackground(Color.red);
-                                    panel.add(btn, i);
-                                }
-                            }
-                        }
-                    }else{
-                        info = engine.solve("empate(" + lista + ").");
-                        if ((!(info.isSuccess())) && contA < 4) {
-                            lista.clear();
-                        }
+                        lista.clear();
                     }
                 }
             } catch (InvalidTheoryException | MalformedGoalException
