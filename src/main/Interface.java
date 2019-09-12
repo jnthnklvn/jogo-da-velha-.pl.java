@@ -1,4 +1,4 @@
-package oldsgame;
+package main;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,11 +11,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import alice.tuprolog.*;
+import alice.tuprolog.exceptions.InvalidTheoryException;
+import alice.tuprolog.exceptions.MalformedGoalException;
+import alice.tuprolog.exceptions.NoSolutionException;
+import alice.tuprolog.exceptions.UnknownVarException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Interface implements ActionListener {
 
@@ -67,35 +72,39 @@ public class Interface implements ActionListener {
             int p = Integer.parseInt(b.getName());
             lista.set(p - 1, "x");
             try {
-                Theory theory = new Theory(new FileInputStream("velha.pl"));
-                engine.setTheory(theory);
-                SolveInfo info = engine.solve("oplay(" + lista + ",X).");
-                p = Integer.parseInt(info.getTerm("X").toString());
-                lista.set(p - 1, "o");
-                desenhar((JButton) panel.getComponent(p - 1));
-                contA -= 1;
-                info = engine.solve("vitoria(" + lista + ",o).");
-                if (info.isSuccess()) {
+                if (contA < 1) {
                     lista.clear();
-                    JButton btn;
-                    for (int i = 0; i < 9; i++) {
-                        btn = (JButton) panel.getComponent(i);
-                        if ("O".equals(btn.getText())) {
-                            btn.setBackground(Color.red);
-                            panel.add(btn, i);
-                        }
-                    }
-                } else if (contA < 4) {
-                    info = engine.solve("empate(" + lista + ").");
+                } else {
+                    Theory theory = new Theory(new FileInputStream("velha.pl"));
+                    engine.setTheory(theory);
+                    engine.solve("oplay(" + lista + ",X).");
+                    SolveInfo info = engine.solve("oplay(" + lista + ",X).");
+                    p = Integer.parseInt(info.getTerm("X").toString());
+                    lista.set(p - 1, "o");
+                    desenhar((JButton) panel.getComponent(p - 1));
+                    contA -= 1;
+                    info = engine.solve("vitoria(" + lista + ",o).");
                     if (info.isSuccess()) {
                         lista.clear();
+                        JButton btn;
+                        for (int i = 0; i < 9; i++) {
+                            btn = (JButton) panel.getComponent(i);
+                            if ("O".equals(btn.getText())) {
+                                btn.setBackground(Color.red);
+                                panel.add(btn, i);
+                            }
+                        }
+                    } else if (contA < 4) {
+                        info = engine.solve("empate(" + lista + ").");
+                        if (info.isSuccess()) {
+                            lista.clear();
+                        }
                     }
                 }
             } catch (InvalidTheoryException | MalformedGoalException
-                    | NoMoreSolutionException | NoSolutionException
                     | UnknownVarException | IOException
-                    | NumberFormatException e) {
-                System.err.println(Arrays.toString(e.getStackTrace()));
+                    | NumberFormatException | NoSolutionException e) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }

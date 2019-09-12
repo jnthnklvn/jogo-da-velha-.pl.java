@@ -28,8 +28,12 @@ vitoriaAntecipada(Lista, Jogador, Oponente) :-
   encontrar_jogada(Lista, Jogada),
   fazer_jogada(Lista, Jogada, Jogador, NovaLista),
   not(vitoriaAgora(NovaLista, Oponente)),
-  aggregate_all(count, vitoriaAgora(NovaLista, Jogador), Count),
+  count(vitoriaAgora(NovaLista, Jogador), Count),
   Count = 2,!.
+
+count(P,Count) :-
+findall(1,P,L),
+length(L,Count).
 
 %% Registra as jogadas e retorna uma nova lista
 fazer_jogada([a,B,C,D,E,F,G,H,I], 1, Jogador, [Jogador,B,C,D,E,F,G,H,I]).
@@ -61,6 +65,5 @@ oplay(L,X) :-
 
 %% Retorna falso se naoh eh possivel vitoria da IA
 empate(L) :- encontrar_jogada(L, X), fazer_jogada(L, X, x, NL),
-             not(vitoriaAgora(NL, x)),!.
-empate(L) :- encontrar_jogada(L, X), fazer_jogada(L, X, o, NL),
+             not(vitoria(NL, x);vitoriaAgora(NL, x)),
              not(vitoriaAgora(NL, o)),!.
