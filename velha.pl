@@ -61,6 +61,6 @@ oplay(L,X) :-
 
 %% Retorna falso se naoh eh possivel vitoria da IA
 empate(L) :- encontrar_jogada(L, X), fazer_jogada(L, X, x, NL),
-             encontrar_jogada(NL, NX), fazer_jogada(NL, NX, o, NNL), not(vitoriaAgora(NNL, x)),
-             (not(member(a,NNL));(encontrar_jogada(NNL, NNX), fazer_jogada(NNL, NNX, x, NNNL))),
-             (vitoria(NNNL,o);vitoria(NNL,o)),!.
+             not(vitoriaAgora(NL, x)),!.
+empate(L) :- encontrar_jogada(L, X), fazer_jogada(L, X, o, NL),
+             not(vitoriaAgora(NL, o)),!.
